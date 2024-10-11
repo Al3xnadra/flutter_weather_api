@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_weather_api/domain/models/weather_model.dart';
+import 'package:flutter_weather_api/features/home/cubit/home_cubit.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
@@ -7,44 +10,80 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '10 °C',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            Text(
-              'Warsaw',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Row(
+    return BlocProvider(
+      create: (context) => HomeCubit(),
+      child: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          final weatherModel = state.model;
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Flexible(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        label: Text('City'),
-                        hintText: 'London',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
+                  if (weatherModel != null)
+                    DisplayWeather(weatherModel: weatherModel),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.search),
-                  ),
+                  SearchCity(),
                 ],
               ),
             ),
-          ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class DisplayWeather extends StatelessWidget {
+  const DisplayWeather({super.key, required this.weatherModel});
+
+  final WeatherModel weatherModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          '${weatherModel.temperature.toString()} °C',
+          style: Theme.of(context).textTheme.displayLarge,
         ),
+        Text(
+          weatherModel.city,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ],
+    );
+  }
+}
+
+class SearchCity extends StatelessWidget {
+  SearchCity({super.key});
+
+  final _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Row(
+        children: [
+          Flexible(
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                label: Text('City'),
+                hintText: 'London',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+          ),
+        ],
       ),
     );
   }
