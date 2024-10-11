@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_api/features/home/page/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,16 +17,5 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const HomePage());
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold();
   }
 }
