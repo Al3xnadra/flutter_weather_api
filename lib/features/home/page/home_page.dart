@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather_api/domain/models/weather_model.dart';
+import 'package:flutter_weather_api/domain/repositories/weather_repository.dart';
 import 'package:flutter_weather_api/features/home/cubit/home_cubit.dart';
 
 class HomePage extends StatelessWidget {
@@ -11,7 +12,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit(),
+      create: (context) =>
+          HomeCubit(WeatherRepository())..getLastKnownWeatherModel(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           final weatherModel = state.model;
@@ -80,7 +82,9 @@ class SearchCity extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<HomeCubit>().getWeatherModel(city: _controller.text);
+            },
             icon: const Icon(Icons.search),
           ),
         ],
