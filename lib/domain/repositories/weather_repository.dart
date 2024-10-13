@@ -13,9 +13,7 @@ class WeatherRepository {
       return null;
     }
 
-    final name = responseData['location']['name'] as String;
-    final temperature = (responseData['current']['temp_c'] + 0.0) as double;
-    return WeatherModel(temperature: temperature, city: name);
+    return WeatherModel.fromJson(responseData);
   }
 
   Future<WeatherModel?> getLastKnownWeatherModel() async {
