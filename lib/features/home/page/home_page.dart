@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_weather_api/data/remote_data_source/weather_remote_data_source.dart';
 import 'package:flutter_weather_api/domain/models/weather_model.dart';
 import 'package:flutter_weather_api/domain/repositories/weather_repository.dart';
 import 'package:flutter_weather_api/features/home/cubit/home_cubit.dart';
@@ -13,7 +14,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          HomeCubit(WeatherRepository())..getLastKnownWeatherModel(),
+          HomeCubit(WeatherRepository(WeatherRemoteDataSource()))
+            ..getLastKnownWeatherModel(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           final weatherModel = state.model;
