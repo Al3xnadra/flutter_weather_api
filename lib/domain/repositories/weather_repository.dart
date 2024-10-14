@@ -17,6 +17,6 @@ class WeatherRepository {
   }
 
   Future<WeatherModel?> getLastKnownWeatherModel() async {
-    return const WeatherModel(temperature: 25, city: 'Barcelona');
+    return WeatherModel(Location('Barcelona'), Current(25));
   }
 }

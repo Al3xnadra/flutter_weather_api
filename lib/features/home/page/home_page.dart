@@ -62,11 +62,11 @@ class DisplayWeather extends StatelessWidget {
     return Column(
       children: [
         Text(
-          '${weatherModel.temperature.toString()} °C',
+          '${weatherModel.current.tempC.toString()} °C',
           style: Theme.of(context).textTheme.displayLarge,
         ),
         Text(
-          weatherModel.city,
+          weatherModel.location.name,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ],
