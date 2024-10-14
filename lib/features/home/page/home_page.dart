@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather_api/core/enums.dart';
-import 'package:flutter_weather_api/data/remote_data_source/weather_remote_data_source.dart';
+import 'package:flutter_weather_api/core/injection_container.dart';
 import 'package:flutter_weather_api/domain/models/weather_model.dart';
-import 'package:flutter_weather_api/domain/repositories/weather_repository.dart';
 import 'package:flutter_weather_api/features/home/cubit/home_cubit.dart';
 
 class HomePage extends StatelessWidget {
@@ -13,10 +12,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          HomeCubit(WeatherRepository(WeatherRemoteDataSource()))
-            ..getLastKnownWeatherModel(),
+    return BlocProvider<HomeCubit>(
+      create: (context) => getIt()..getLastKnownWeatherModel(),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (context, state) {
           if (state.status == Status.error) {
@@ -29,22 +26,25 @@ class HomePage extends StatelessWidget {
           final weatherModel = state.model;
 
           return Scaffold(
-            body: Center(child: Builder(builder: (context) {
-              if (state.status == Status.loading) {
-                return const CircularProgressIndicator();
-              }
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (weatherModel != null)
-                    DisplayWeather(weatherModel: weatherModel),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SearchCity(),
-                ],
-              );
-            })),
+            body: Center(child: Builder(
+              builder: (context) {
+                if (state.status == Status.loading) {
+                  return const CircularProgressIndicator();
+                }
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (weatherModel != null)
+                      DisplayWeather(weatherModel: weatherModel),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SearchCity(),
+                  ],
+                );
+              },
+            )),
           );
         },
       ),
