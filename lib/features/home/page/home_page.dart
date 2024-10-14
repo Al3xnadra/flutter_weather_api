@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_weather_api/core/enums.dart';
 import 'package:flutter_weather_api/data/remote_data_source/weather_remote_data_source.dart';
 import 'package:flutter_weather_api/domain/models/weather_model.dart';
 import 'package:flutter_weather_api/domain/repositories/weather_repository.dart';
@@ -16,12 +17,23 @@ class HomePage extends StatelessWidget {
       create: (context) =>
           HomeCubit(WeatherRepository(WeatherRemoteDataSource()))
             ..getLastKnownWeatherModel(),
-      child: BlocBuilder<HomeCubit, HomeState>(
+      child: BlocConsumer<HomeCubit, HomeState>(
+        listener: (context, state) {
+          if (state.status == Status.error) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(state.errorMessage ??
+                    'Something went wrong. Try again later')));
+          }
+        },
         builder: (context, state) {
           final weatherModel = state.model;
+
           return Scaffold(
-            body: Center(
-              child: Column(
+            body: Center(child: Builder(builder: (context) {
+              if (state.status == Status.loading) {
+                return const CircularProgressIndicator();
+              }
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (weatherModel != null)
@@ -31,8 +43,8 @@ class HomePage extends StatelessWidget {
                   ),
                   SearchCity(),
                 ],
-              ),
-            ),
+              );
+            })),
           );
         },
       ),
