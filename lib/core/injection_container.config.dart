@@ -14,8 +14,6 @@ import 'package:flutter_weather_api/data/remote_data_source/weather_remote_data_
     as _i1024;
 import 'package:flutter_weather_api/domain/repositories/weather_repository.dart'
     as _i418;
-import 'package:flutter_weather_api/features/home/cubit/home_cubit.dart'
-    as _i524;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -41,8 +39,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1024.WeatherRemoteRetrofitDataSource(gh<_i361.Dio>()));
     gh.factory<_i418.WeatherRepository>(() =>
         _i418.WeatherRepository(gh<_i1024.WeatherRemoteRetrofitDataSource>()));
-    gh.factory<_i524.HomeCubit>(
-        () => _i524.HomeCubit(gh<_i418.WeatherRepository>()));
     return this;
   }
 }
