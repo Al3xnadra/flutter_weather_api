@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather_api/core/enums.dart';
 import 'package:flutter_weather_api/core/injection_container.dart';
-import 'package:flutter_weather_api/domain/models/weather_model.dart';
 import 'package:flutter_weather_api/features/home/cubit/home_cubit.dart';
+import 'package:flutter_weather_api/features/home/widgets/animated_search.dart';
+import 'package:flutter_weather_api/features/home/widgets/display_weather.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
@@ -26,82 +27,44 @@ class HomePage extends StatelessWidget {
           final weatherModel = state.model;
 
           return Scaffold(
-            body: Center(child: Builder(
-              builder: (context) {
-                if (state.status == Status.loading) {
-                  return const CircularProgressIndicator();
-                }
+            body: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/sunny.jpeg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                color: const Color(0xFF063C69).withOpacity(0.2),
+                child: Center(
+                  child: Builder(
+                    builder: (context) {
+                      if (state.status == Status.loading) {
+                        return const CircularProgressIndicator();
+                      }
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (weatherModel != null)
-                      DisplayWeather(weatherModel: weatherModel),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SearchCity(),
-                  ],
-                );
-              },
-            )),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class DisplayWeather extends StatelessWidget {
-  const DisplayWeather({super.key, required this.weatherModel});
-
-  final WeatherModel weatherModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          '${weatherModel.current.tempC.toString()} °C',
-          style: Theme.of(context).textTheme.displayLarge,
-        ),
-        Text(
-          weatherModel.location.name,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-      ],
-    );
-  }
-}
-
-class SearchCity extends StatelessWidget {
-  SearchCity({super.key});
-
-  final _controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Row(
-        children: [
-          Flexible(
-            child: TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                label: Text('City'),
-                hintText: 'London',
-                border: OutlineInputBorder(),
+                      return Column(
+                        children: [
+                          if (weatherModel != null)
+                            DisplayWeather(
+                              weatherModel: weatherModel,
+                            ),
+                          if (state.status == Status.error)
+                            const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 60),
+                                child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: AnimatedSearch())),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              context.read<HomeCubit>().getWeatherModel(city: _controller.text);
-            },
-            icon: const Icon(Icons.search),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

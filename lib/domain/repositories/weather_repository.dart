@@ -9,7 +9,7 @@ class WeatherRepository {
     return _weatherRemoteDataSource.getWeatherData(city: city);
   }
 
-  Future<WeatherModel?> getLastKnownWeatherModel() async {
-    return WeatherModel(Location('Barcelona'), Current(25));
+  Future<WeatherModel?> getLastKnownWeatherModel() {
+    return _weatherRemoteDataSource.getWeatherData(city: 'Barcelona');
   }
 }
